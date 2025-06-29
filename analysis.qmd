@@ -1,5 +1,16 @@
 ---
 title: "Biden Polling"
 format: html
+execute: 
+  echo: false
 ---
 
+
+```{r}
+#| message: false
+library(tidyverse)
+poll_data <- tibble(biden = as.factor(c(rep("Yes", 655), 
+                                        rep("No", 904)))) |> 
+                slice_sample(prop = 1)
+```
+Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.
