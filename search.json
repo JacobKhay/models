@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Poll Data",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "analysis.html",
+    "href": "analysis.html",
+    "title": "Biden Polling",
+    "section": "",
+    "text": "Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.One potential weakness in our model is that the survey data may not fully represent the broader voting population, which could bias our estimates. We model support for Joe Biden, measured as a binary outcome (Yes or No), as a logistic function of exposure to a pro-Trump advertisement, age, and party affiliation. We estimate that the average probability of a respondent voting for Biden is 42%, with a 95% confidence interval ranging from 39% to 45%. The estimates might be wrong because the model relies on simulated data that may not accurately reflect real-world voting behavior or population characteristics.\n[ ( ) = _0 + _1 X_1 + _2 X_2 + + _k X_k ]\n[ ( ) = -1.25 + 0.80 + 0.45 - 0.30 ]\n\n\nWarning: There was 1 warning in `mutate()`.\nℹ In argument: `across(where(is.numeric), round, digits = 2)`.\nCaused by warning:\n! The `...` argument of `across()` is deprecated as of dplyr 1.1.0.\nSupply arguments directly to `.fns` through an anonymous function instead.\n\n  # Previously\n  across(a:b, mean, na.rm = TRUE)\n\n  # Now\n  across(a:b, \\(x) mean(x, na.rm = TRUE))\n\n\n\n\n\n\n\n\nLogistic Regression Results\n\n\nPredicting Support for Joe Biden\n\n\nVariable\nEstimate\nLower 95% CI\nUpper 95% CI\n\n\n\n\n(Intercept)\n-0.33\n-0.65\n-0.01\n\n\ntrump_ad\n0.14\n-0.06\n0.34\n\n\nage\n0.00\n-0.01\n0.00\n\n\nrepublican\n0.03\n-0.17\n0.23"
+  }
+]
