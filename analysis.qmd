@@ -1,23 +1,57 @@
 ---
 title: "Biden Polling"
 format: html
-execute: 
+execute:
   echo: false
 ---
-
 
 ```{r}
 #| message: false
 library(tidyverse)
 library(tidymodels)
 library(broom)
-poll_data <- tibble(biden = as.factor(c(rep("Yes", 655), 
-                                        rep("No", 904)))) |> 
-                slice_sample(prop = 1)
+library(gt)
+
+# Simulate poll data with all necessary variables
+poll_data <- tibble(
+  biden = as.factor(c(rep("Yes", 655), rep("No", 904))),
+  trump_ad = sample(0:1, 1559, replace = TRUE),
+  age = sample(18:80, 1559, replace = TRUE),
+  republican = sample(0:1, 1559, replace = TRUE)
+) |>
+  slice_sample(prop = 1)
 ```
-Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.One potential weakness in our model is that the survey data may not fully represent the broader voting population, which could bias our estimates.
+Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.One potential weakness in our model is that the survey data may not fully represent the broader voting population, which could bias our estimates. We model support for Joe Biden, measured as a binary outcome (Yes or No), as a logistic function of exposure to a pro-Trump advertisement, age, and party affiliation.
+
 
 \[
 \log\left( \frac{\rho}{1 - \rho} \right) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_k X_k
 \]
 
+\[
+\log\left( \frac{\hat{p}}{1 - \hat{p}} \right) = -1.25 + 0.80 \cdot \text{trump\_ad} + 0.45 \cdot \text{age} - 0.30 \cdot \text{republican}
+\]
+
+# Optional intercept-only model
+fit_biden <- logistic_reg() |>
+  fit(biden ~ 1, data = poll_data)
+
+
+# Logistic regression with predictors
+model <- glm(biden ~ trump_ad + age + republican, data = poll_data, family = "binomial")
+
+# Clean summary table with gt
+tidy(model, conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high) |>
+  mutate(across(where(is.numeric), round, digits = 2)) |>
+  gt() |>
+  tab_header(
+    title = "Logistic Regression Results",
+    subtitle = "Predicting Support for Joe Biden"
+  ) |>
+  cols_label(
+    term = "Variable",
+    estimate = "Estimate",
+    conf.low = "Lower 95% CI",
+    conf.high = "Upper 95% CI"
+  )

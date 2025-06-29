@@ -63,8 +63,21 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.One potential weakness in our model is that the survey data may not fully represent the broader voting population, which could bias our estimates.</p>
+<p>Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.One potential weakness in our model is that the survey data may not fully represent the broader voting population, which could bias our estimates. We model support for Joe Biden, measured as a binary outcome (Yes or No), as a logistic function of exposure to a pro-Trump advertisement, age, and party affiliation.</p>
 <p>[ ( ) = _0 + _1 X_1 + _2 X_2 + + _k X_k ]</p>
+<p>[ ( ) = -1.25 + 0.80 + 0.45 - 0.30 ]</p>
+<section id="optional-intercept-only-model" class="level1">
+<h1>Optional intercept-only model</h1>
+<p>fit_biden &lt;- logistic_reg() |&gt; fit(biden ~ 1, data = poll_data)</p>
+</section>
+<section id="logistic-regression-with-predictors" class="level1">
+<h1>Logistic regression with predictors</h1>
+<p>model &lt;- glm(biden ~ trump_ad + age + republican, data = poll_data, family = “binomial”)</p>
+</section>
+<section id="clean-summary-table-with-gt" class="level1">
+<h1>Clean summary table with gt</h1>
+<p>tidy(model, conf.int = TRUE) |&gt; select(term, estimate, conf.low, conf.high) |&gt; mutate(across(where(is.numeric), round, digits = 2)) |&gt; gt() |&gt; tab_header( title = “Logistic Regression Results”, subtitle = “Predicting Support for Joe Biden” ) |&gt; cols_label( term = “Variable”, estimate = “Estimate”, conf.low = “Lower 95% CI”, conf.high = “Upper 95% CI” )</p>
+</section>
 
 </main>
 <!-- /main column -->
