@@ -11,7 +11,7 @@ library(tidyverse)
 library(tidymodels)
 library(broom)
 library(gt)
-
+library(marginaleffects)
 # Simulate poll data with all necessary variables
 poll_data <- tibble(
   biden = as.factor(c(rep("Yes", 655), rep("No", 904))),
@@ -21,7 +21,8 @@ poll_data <- tibble(
 ) |>
   slice_sample(prop = 1)
 ```
-Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.One potential weakness in our model is that the survey data may not fully represent the broader voting population, which could bias our estimates. We model support for Joe Biden, measured as a binary outcome (Yes or No), as a logistic function of exposure to a pro-Trump advertisement, age, and party affiliation.
+Public opinion and political preferences are often shaped by both personal characteristics and outside influences like media exposure. Using polling data from a recent national survey of U.S. adults, we examine whether being shown a pro-Trump advertisement affects support for Joe Biden.One potential weakness in our model is that the survey data may not fully represent the broader voting population, which could bias our estimates. We model support for Joe Biden, measured as a binary outcome (Yes or No), as a logistic function of exposure to a pro-Trump advertisement, age, and party affiliation. We estimate that the average probability of a respondent voting for Biden is 42%, with a 95% confidence interval ranging from 39% to 45%. The estimates might be wrong because the model relies on simulated data that may not accurately reflect real-world voting behavior or population characteristics. 
+
 
 
 \[
@@ -32,14 +33,19 @@ Public opinion and political preferences are often shaped by both personal chara
 \log\left( \frac{\hat{p}}{1 - \hat{p}} \right) = -1.25 + 0.80 \cdot \text{trump\_ad} + 0.45 \cdot \text{age} - 0.30 \cdot \text{republican}
 \]
 
+```{r}
 # Optional intercept-only model
 fit_biden <- logistic_reg() |>
   fit(biden ~ 1, data = poll_data)
+```
 
-
+```{r}
 # Logistic regression with predictors
 model <- glm(biden ~ trump_ad + age + republican, data = poll_data, family = "binomial")
 
+```
+
+```{r}
 # Clean summary table with gt
 tidy(model, conf.int = TRUE) |>
   select(term, estimate, conf.low, conf.high) |>
@@ -55,3 +61,27 @@ tidy(model, conf.int = TRUE) |>
     conf.low = "Lower 95% CI",
     conf.high = "Upper 95% CI"
   )
+```
+
+```{r}
+# Load needed libraries
+library(tidyverse)
+library(tidymodels)
+library(marginaleffects)
+
+# Fit the model again for clarity
+fit_biden <- logistic_reg() |>
+  fit(biden ~ 1, data = poll_data)
+
+# Generate average predicted probabilities
+avg_predictions(fit_biden, type = "prob") |>
+  filter(group == "Yes") |>
+  ggplot(aes(x = estimate, y = group)) +
+  geom_pointrange(aes(xmin = conf.low, xmax = conf.high)) +
+  labs(
+    title = "Estimated Probability of Voting for Biden",
+    x = "Predicted Probability",
+    y = NULL
+  ) +
+  xlim(0, 1)
+```
